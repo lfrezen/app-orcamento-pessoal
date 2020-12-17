@@ -43,6 +43,7 @@ class Bd {
             if (despesa === null) {
                 continue
             }
+            despesa.id = i;
             despesas.push(despesa);
         }
         return despesas;
@@ -73,6 +74,10 @@ class Bd {
         }
         return despesasFiltradas;
     }
+
+    remover(id) {
+        localStorage.removeItem(id);
+    }
 }
 
 let bd = new Bd();
@@ -96,10 +101,11 @@ function cadastrarDespesa() {
 
     if (despesa.validarDados()) {
         bd.gravar(despesa);
-        document.getElementById('exampleModalLabel').innerText = 'Registro inserido com sucesso';
-        document.getElementById('messageBody').innerText = 'Despesa foi cadastrada com sucesso';
-        $('#messageTitle').addClass('text-success');
-        $(':button:contains(Voltar)').addClass('btn-success');
+        document.getElementById('exampleModalLabel').innerHTML = 'Registro inserido com sucesso';
+        document.getElementById('modal_titulo_div').className = 'modal-header text-success';
+        document.getElementById('modal_conteudo').innerHTML = 'Despesa foi cadastrada com sucesso';
+        document.getElementById('modal_btn').innerHTML = 'Voltar'
+        document.getElementById('modal_btn').className = 'btn btn-success';
         $('#modalRegistraDespesa').modal('show');
 
         ano.value = "";
@@ -109,10 +115,11 @@ function cadastrarDespesa() {
         descricao.value = "";
         valor.value = "";
     } else {
-        document.getElementById('exampleModalLabel').innerText = 'Erro na gravação';
-        document.getElementById('messageBody').innerText = 'Existem campos obrigatórios que não foram preenchidos';
-        $('#messageTitle').addClass('text-danger');
-        $(':button:contains(Voltar)').addClass('btn-danger');
+        document.getElementById('exampleModalLabel').innerHTML = 'Erro na inclusão do registro';
+        document.getElementById('modal_titulo_div').className = 'modal-header text-danger';
+        document.getElementById('modal_conteudo').innerHTML = 'Erro na gravação, verifique se todos os campos foram preenchidos corretamente!';
+        document.getElementById('modal_btn').innerHTML = 'Voltar e corrigir'
+        document.getElementById('modal_btn').className = 'btn btn-danger'
         $('#modalRegistraDespesa').modal('show');
     }
 }
@@ -146,6 +153,17 @@ function carregaListaDespesas(despesas = Array(), filtro = false) {
         linha.insertCell(1).innerHTML = d.tipo;
         linha.insertCell(2).innerHTML = d.descricao;
         linha.insertCell(3).innerHTML = d.valor;
+        // criar botao de exclusao
+        let btn = document.createElement('button');
+        btn.className = 'btn btn-danger'
+        btn.innerHTML = '<i class="fas fa-times"></i>';
+        btn.id = `id_despesa_${d.id}`;
+        btn.onclick = function() {
+            let id = this.id.replace('id_despesa_', '');
+            bd.remover(id);
+            window.location.reload();
+        };
+        linha.insertCell(4).append(btn);
     })
 }
 
