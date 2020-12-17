@@ -7,6 +7,14 @@ class Despesa {
         this.descricao = descricao
         this.valor = valor
     }
+    validarDados() {
+        for (let i in this) {
+            if (this[i] == undefined || this[i] == '' || this[i] == null) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
 
 class Bd {
@@ -47,5 +55,18 @@ function cadastrarDespesa() {
         valor.value
     );
 
-    bd.gravar(despesa);
+    if (despesa.validarDados()) {
+        bd.gravar(despesa);
+        document.getElementById('exampleModalLabel').innerText = 'Registro inserido com sucesso';
+        document.getElementById('messageBody').innerText = 'Despesa foi cadastrada com sucesso';
+        $('#messageTitle').addClass('text-success');
+        $(':button:contains(Voltar)').addClass('btn-success');
+        $('#modalRegistraDespesa').modal('show');
+    } else {
+        document.getElementById('exampleModalLabel').innerText = 'Erro na gravação';
+        document.getElementById('messageBody').innerText = 'Existem campos obrigatórios que não foram preenchidos';        
+        $('#messageTitle').addClass('text-danger');        
+        $(':button:contains(Voltar)').addClass('btn-danger');
+        $('#modalRegistraDespesa').modal('show');
+    }
 }
